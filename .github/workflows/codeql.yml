@@ -32,3 +32,15 @@ jobs:
         uses: github/codeql-action/analyze@v3
         with:
           category: '/language:javascript-typescript'
+          output: sarif
+          upload: always
+
+      # The SARIF file is also kept as an artifact: it is the full result set,
+      # which the security tab summarises.
+      - name: Upload SARIF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-sarif
+          path: sarif/
+          retention-days: 7
