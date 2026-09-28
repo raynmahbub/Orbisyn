@@ -1,0 +1,41 @@
+{
+  "name": "orbisyn",
+  "version": "0.1.0-dev.0",
+  "private": true,
+  "description": "Self-hostable ecosystem manager for open-source software: resolve any upstream source into one canonical app record.",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*",
+    "services/*",
+    "apps/*",
+    "tooling/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @orbisyn/web",
+    "dev:api": "npm run dev --workspace @orbisyn/gateway",
+    "build": "npm run build --workspace @orbisyn/gateway && npm run build --workspace @orbisyn/web",
+    "start": "npm run start --workspace @orbisyn/gateway",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "verify": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "selfhost": "npm run build && npm run start",
+    "build:api": "npm run build --workspace @orbisyn/gateway",
+    "build:web": "npm run build --workspace @orbisyn/web",
+    "preview": "npm run preview --workspace @orbisyn/web"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@types/node": "26.6.3",
+    "@vitest/coverage-v8": "^5.0.2",
+    "typescript": "5.9.3",
+    "vitest": "5.0.2"
+  }
+}
