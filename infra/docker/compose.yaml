@@ -1,0 +1,44 @@
+# Single-service deployment: the gateway serves both the API and the built web
+# client on one port. Copy .env.example to .env to configure tokens, then:
+#
+#   docker compose -f infra/docker/compose.yaml up --build
+#
+name: orbisyn
+
+services:
+  gateway:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+    image: orbisyn:local
+    restart: unless-stopped
+    ports:
+      - '${GATEWAY_PORT:-8787}:8787'
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      NODE_ENV: production
+      GATEWAY_HOST: 0.0.0.0
+      GATEWAY_PORT: '8787'
+      GATEWAY_CORS_ORIGINS: '${GATEWAY_CORS_ORIGINS:-}'
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:8787/api/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
