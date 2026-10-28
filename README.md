@@ -11,7 +11,8 @@ direct release pages, community registries and companion stores — without losi
 sight of where an app actually came from.
 
 [Storefront guide](docs/storefront/README.md) · [Documentation](docs/README.md) ·
-[Provider contract](docs/providers/README.md) · [Protocol](docs/protocol/osp.md)
+[Provider contract](docs/providers/README.md) · [Protocol](docs/protocol/osp.md) ·
+[Architecture decisions](docs/adr/README.md)
 
 </div>
 

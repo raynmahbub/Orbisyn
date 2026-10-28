@@ -65,11 +65,10 @@ Vite dev server proxies that path to `ORBISYN_GATEWAY_URL` (default
 `http://127.0.0.1:8787`). One origin in development, one origin in production.
 
 Behind a TLS-inspecting proxy, Node may need the proxy's CA in addition to its
-bundled store, for example
-`NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt npm run preview`.
-Without it, browser-style `curl` can succeed while Node's outbound `fetch`
-reports `UNABLE_TO_VERIFY_LEAF_SIGNATURE`; the gateway will surface that as a
-typed `upstream-unavailable` response rather than pretending a source resolved.
+bundled store. Point `NODE_EXTRA_CA_CERTS` at the PEM certificate bundle for that
+proxy when starting the gateway. Without the CA, Node's outbound `fetch` may fail
+TLS verification; the gateway surfaces that as a typed `upstream-unavailable`
+response rather than pretending a source resolved.
 
 ## Secrets
 
