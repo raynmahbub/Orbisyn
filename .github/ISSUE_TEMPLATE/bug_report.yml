@@ -1,0 +1,65 @@
+name: Bug report
+description: Something resolved incorrectly, crashed, or did not load.
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not paste API tokens or private repository URLs. Redact them.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: The release tag, or the commit you are running (`git rev-parse --short HEAD`).
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Where does it happen?
+      options:
+        - Gateway API
+        - Web client
+        - Provider resolution (GitHub, GitLab, Codeberg/Forgejo, F-Droid, direct URL)
+        - Build, tests or tooling
+        - Documentation
+    validations:
+      required: true
+  - type: input
+    id: reference
+    attributes:
+      label: Reference that reproduces it
+      description: The exact string you pasted, if the report is about a resolution.
+      placeholder: https://github.com/owner/repo
+    validations:
+      required: false
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. POST /api/resolve with ...
+        2. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead
+      description: Include the resolution trace from the app, the response body, or the error output.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Node version, browser or device, and whether you run a token.
+      placeholder: macOS 15 · Node 22.22 · Safari on iOS 26 · GITHUB_TOKEN set
+    validations:
+      required: false

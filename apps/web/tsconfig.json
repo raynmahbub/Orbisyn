@@ -1,0 +1,15 @@
+{
+  "extends": "@orbisyn/tsconfig/react.json",
+  "include": ["src", "vite.config.ts"],
+  "compilerOptions": {
+    "types": ["vite/client"],
+    "paths": {
+      "@orbisyn/contracts": ["../../packages/contracts/src/index.ts"],
+      "@orbisyn/core": ["../../packages/core/src/index.ts"],
+      "@orbisyn/providers": ["../../packages/providers/src/index.ts"],
+      "@orbisyn/osp": ["../../packages/osp/src/index.ts"],
+      "@orbisyn/sdk": ["../../packages/sdk/src/index.ts"],
+      "@/*": ["./src/*"]
+    }
+  }
+}

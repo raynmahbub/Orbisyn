@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1220" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f8fc" />
+    <title>Orbisyn — every source, one orbit</title>
+    <meta
+      name="description"
+      content="Orbisyn resolves open-source projects from GitHub, GitLab, Codeberg, Forgejo, F-Droid and direct downloads into one verifiable record."
+    />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- Installable from the share sheet on iOS, which ignores the manifest icons. -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Orbisyn" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

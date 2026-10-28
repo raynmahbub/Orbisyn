@@ -1,0 +1,16 @@
+{
+  "name": "@orbisyn/core",
+  "version": "0.1.0-dev.0",
+  "private": true,
+  "description": "Domain model, ports and use cases. Pure TypeScript, zero runtime dependencies.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./testing": "./src/testing/fakes.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

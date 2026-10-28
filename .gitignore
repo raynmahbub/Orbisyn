@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.pnp.*
+.yarn/*
+
+# Build output
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Tooling caches
+.cache/
+.vite/
+.turbo/
+coverage/
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Secrets & local env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local infrastructure volumes
+infra/volumes/

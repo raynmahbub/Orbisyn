@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/raynmahbub/Orbisyn/security/advisories/new
+    about: Report a vulnerability privately instead of opening a public issue.
+  - name: How the system works
+    url: https://github.com/raynmahbub/Orbisyn/blob/main/docs/architecture/overview.md
+    about: Architecture, providers, protocol and decision records.

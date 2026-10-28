@@ -1,0 +1,8 @@
+<!-- Orbisyn mark: one core, one orbit, one satellite.
+     Geometry matches scripts/generate-icons.mjs — keep the two in step. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="mark-title">
+  <title id="mark-title">Orbisyn</title>
+  <circle cx="32" cy="32" r="19.2" fill="none" stroke="#2563eb" stroke-width="3.52" />
+  <circle cx="32" cy="32" r="6.72" fill="#60a5fa" />
+  <circle cx="47.53" cy="20.71" r="3.33" fill="#7dd3fc" />
+</svg>

@@ -1,0 +1,20 @@
+{
+  "name": "@orbisyn/contracts",
+  "version": "0.1.0-dev.0",
+  "private": true,
+  "description": "Runtime-validated wire schemas shared by clients, services and the SDK.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@orbisyn/core": "0.1.0-dev.0"
+  }
+}
