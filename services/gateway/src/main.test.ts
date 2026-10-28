@@ -1,3 +1,6 @@
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { installProcessHandlers, type RunningGateway, startGateway } from './main.js';
 
@@ -35,6 +38,43 @@ describe('startGateway', () => {
       expect(response.json().status).toBe('ok');
     } finally {
       await running.close('SIGTERM');
+    }
+  });
+
+  it('uses the durable store for normal runtime and reloads it after restart', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'orbisyn-gateway-store-'));
+    const env = {
+      ...ENV,
+      NODE_ENV: 'development',
+      ORBISYN_STORE_FILE: join(directory, 'data', 'store.json'),
+    };
+
+    try {
+      const first = await startGateway({ env });
+      try {
+        const health = await first.app.inject({ method: 'GET', url: '/api/health' });
+        expect(health.json().store).toBe('file');
+        const created = await first.app.inject({
+          method: 'POST',
+          url: '/api/collections',
+          payload: { name: 'Saved across restart', appIds: [], visibility: 'private' },
+        });
+        expect(created.statusCode).toBe(201);
+      } finally {
+        await first.close('test');
+      }
+
+      const second = await startGateway({ env });
+      try {
+        const collections = await second.app.inject({ method: 'GET', url: '/api/collections' });
+        expect(collections.json().collections).toMatchObject([
+          { name: 'Saved across restart', visibility: 'private' },
+        ]);
+      } finally {
+        await second.close('test');
+      }
+    } finally {
+      await rm(directory, { recursive: true });
     }
   });
 

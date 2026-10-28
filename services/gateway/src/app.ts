@@ -30,10 +30,12 @@ import { createProviderHealthTracker } from './provider-health.js';
 import { registerLibraryRoutes } from './routes/library.js';
 import { registerOspRoutes } from './routes/osp.js';
 import { registerResolveRoutes } from './routes/resolve.js';
+import { registerSyncVaultRoutes } from './routes/sync-vault.js';
 import { registerSystemRoutes } from './routes/system.js';
 import { mountStaticClient } from './static.js';
 import type { StoreBundle } from './store/index.js';
 import { createStore } from './store/index.js';
+import { createMemorySyncVaultStore, type SyncVaultStore } from './sync-vault.js';
 
 /**
  * Application factory.
@@ -59,6 +61,8 @@ export interface BuildAppOptions {
   readonly cache?: ReturnType<typeof createMemoryCache>;
   /** Overrides the store backend; tests inject an empty one per case. */
   readonly store?: StoreBundle;
+  /** Opaque encrypted vault storage; tests use an isolated in-memory default. */
+  readonly syncVaults?: SyncVaultStore;
   readonly providers?: readonly SourceProvider[];
   readonly registerStatic?: boolean;
   /** Injected by tests; production uses `loadConfig()`. */
@@ -84,6 +88,7 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
   const cache = options.cache ?? createMemoryCache({ clock, maxEntries: config.cacheMaxEntries });
   const composed = options.store ?? createStore({ maxApps: 10_000 });
   const store = composed.store;
+  const syncVaults = options.syncVaults ?? createMemorySyncVaultStore();
   const registry = createProviderRegistry({
     ...providerOverrides(options.providers),
     extraForgeHosts: config.forgeHosts,
@@ -114,6 +119,7 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     cache,
     store,
     storeKind: composed.kind,
+    syncVaults,
     registry,
     providerHealth,
     startedAt: Date.now(),
@@ -141,7 +147,7 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
   });
   await app.register(cors, {
     origin: config.corsOrigins.includes('*') ? true : config.corsOrigins,
-    methods: ['GET', 'POST', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
     maxAge: 86_400,
   });
   await app.register(sensible);
@@ -173,6 +179,7 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
       registerResolveRoutes(api, context);
       registerOspRoutes(api, context);
       registerLibraryRoutes(api, context);
+      registerSyncVaultRoutes(api, context);
     },
     { prefix: API_PREFIX },
   );

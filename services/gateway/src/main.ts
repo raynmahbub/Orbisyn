@@ -3,7 +3,8 @@ import type { FastifyInstance } from 'fastify';
 import { buildApp } from './app.js';
 import { loadConfig } from './config.js';
 import { createLogger } from './logger.js';
-import { createStore } from './store/index.js';
+import { createFileStore, createStore } from './store/index.js';
+import { createFileSyncVaultStore, createMemorySyncVaultStore } from './sync-vault.js';
 
 /**
  * Entry point.
@@ -30,8 +31,15 @@ export interface StartOptions {
 export async function startGateway(options: StartOptions = {}): Promise<RunningGateway> {
   const config = loadConfig(options.env ?? process.env);
   const { logger, instance, flush } = createLogger(config);
-  const store = createStore({ maxApps: 10_000 });
-  const app = await buildApp({ config, logInstance: instance, store });
+  const store =
+    config.nodeEnv === 'test'
+      ? createStore({ maxApps: 10_000 })
+      : await createFileStore({ filePath: config.storeFile, maxApps: 10_000 });
+  const syncVaults =
+    config.nodeEnv === 'test'
+      ? createMemorySyncVaultStore()
+      : await createFileSyncVaultStore(config.syncVaultFile);
+  const app = await buildApp({ config, logInstance: instance, store, syncVaults });
 
   const address = await app.listen({ host: config.host, port: config.port });
   logger.info('gateway listening', {

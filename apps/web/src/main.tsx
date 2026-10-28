@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app.js';
+import { configureNativeShell } from './native-shell.js';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
@@ -25,6 +26,8 @@ const queryClient = new QueryClient({
     mutations: { retry: 0 },
   },
 });
+
+configureNativeShell();
 
 const container = document.getElementById('root');
 if (container === null) {

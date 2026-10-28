@@ -249,21 +249,24 @@ describe('Orbisyn Store routes', () => {
     expect(await screen.findByText('Example Aurora App')).toBeInTheDocument();
   });
 
-  it('installs and wishlists an app, completing the simulated package handoff', async () => {
+  it('runs the disclosed install preview without claiming installation, and supports wishlists', async () => {
     const user = userEvent.setup();
     renderStoreRoutes('/app/localsend');
 
     const install = screen.getAllByRole('button', { name: 'Install LocalSend' })[0] as HTMLElement;
     await user.click(install);
-    expect(await screen.findByText('Install queued')).toBeInTheDocument();
-    await waitFor(
-      () =>
-        expect(screen.getAllByRole('button', { name: 'Install LocalSend' })[0]).toHaveTextContent(
-          'Installed',
-        ),
-      { timeout: 6_000 },
+    expect(await screen.findByText('Install preview queued')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Install queue, 1 active' }));
+    expect(
+      await screen.findByText('Preview complete · nothing installed', {}, { timeout: 6_000 }),
+    ).toBeInTheDocument();
+    await user.click(
+      screen.getAllByRole('button', { name: 'Close install queue' })[0] as HTMLElement,
     );
-    expect(window.localStorage.getItem(STORE_STORAGE_KEY)).toContain('localsend');
+    expect(screen.getAllByRole('button', { name: 'Install LocalSend' })[0]).toBeInTheDocument();
+    expect(JSON.parse(window.localStorage.getItem(STORE_STORAGE_KEY) ?? '{}').installed).toEqual(
+      {},
+    );
 
     const saveButtons = screen.getAllByRole('button', { name: 'Add LocalSend to wishlist' });
     await user.click(saveButtons[0] as HTMLElement);
@@ -272,12 +275,13 @@ describe('Orbisyn Store routes', () => {
     ).toBeGreaterThan(0);
   });
 
-  it('queues available updates and persists appearance and density settings', async () => {
+  it('starts honestly with no installed apps, and persists appearance and density settings', async () => {
     const user = userEvent.setup();
     renderStoreRoutes('/updates');
 
-    await user.click(screen.getByRole('button', { name: /Update all/ }));
-    expect(screen.getByRole('button', { name: /Install queue.*active/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Nothing to update yet.' })).toBeInTheDocument();
+    expect(screen.getByText('No apps in your library yet')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Check sources' })).toBeDisabled();
 
     const settingsLinks = screen.getAllByRole('link', { name: 'Settings' });
     await user.click(settingsLinks[0] as HTMLElement);

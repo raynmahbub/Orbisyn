@@ -13,8 +13,6 @@ import type {
 
 export const STORE_STORAGE_KEY = 'orbisyn.store.v1';
 
-const DEMO_NOW = '2026-10-27T09:00:00.000Z';
-
 const DEFAULT_SOURCE_ENABLED: Readonly<Record<BridgeId, boolean>> = Object.fromEntries(
   BRIDGES.map((bridge) => [bridge.id, bridge.enabledByDefault]),
 ) as Readonly<Record<BridgeId, boolean>>;
@@ -36,120 +34,19 @@ export const DEFAULT_SETTINGS: Settings = {
   gatewayUrl: '/api',
 };
 
-const INITIAL_COLLECTIONS: readonly Collection[] = [
-  {
-    id: 'daily-drivers',
-    name: 'Daily drivers',
-    description: 'The essential apps installed on every new device.',
-    appIds: ['localsend', 'bitwarden', 'firefox', 'joplin', 'organic-maps'],
-    color: '#7c8cff',
-  },
-  {
-    id: 'creative-studio',
-    name: 'Creative studio',
-    description: 'Open tools for image, video, 3D and streaming work.',
-    appIds: ['blender', 'krita', 'obs-studio', 'gimp', 'image-toolbox'],
-    color: '#f58bd8',
-  },
-];
-
-const INITIAL_NOTIFICATIONS: readonly StoreNotification[] = [
-  {
-    id: 'welcome',
-    title: 'Welcome to Orbisyn',
-    message: 'Your library is local to this browser. Connect sources whenever you are ready.',
-    createdAt: DEMO_NOW,
-    read: false,
-    tone: 'info',
-  },
-  {
-    id: 'updates',
-    title: 'Updates are waiting',
-    message: 'Several installed apps have newer preview builds from their pinned sources.',
-    createdAt: DEMO_NOW,
-    read: false,
-    tone: 'warning',
-  },
-  {
-    id: 'privacy',
-    title: 'No account required',
-    message: 'Browsing works without sign-in and telemetry stays off.',
-    createdAt: DEMO_NOW,
-    read: false,
-    tone: 'success',
-  },
-];
-
 export const INITIAL_STATE: StoreState = {
-  installed: {
-    bitwarden: {
-      appId: 'bitwarden',
-      version: '2026.9.4',
-      sourceId: 'forge',
-      installedAt: DEMO_NOW,
-      autoUpdate: true,
-      pinned: false,
-    },
-    signal: {
-      appId: 'signal',
-      version: '7.31.4',
-      sourceId: 'forge',
-      installedAt: DEMO_NOW,
-      autoUpdate: true,
-      pinned: false,
-    },
-    vscode: {
-      appId: 'vscode',
-      version: '1.105.2',
-      sourceId: 'forge',
-      installedAt: DEMO_NOW,
-      autoUpdate: false,
-      pinned: true,
-    },
-    blender: {
-      appId: 'blender',
-      version: '4.5.3',
-      sourceId: 'forge',
-      installedAt: DEMO_NOW,
-      autoUpdate: true,
-      pinned: false,
-    },
-    antennapod: {
-      appId: 'antennapod',
-      version: '3.7.4',
-      sourceId: 'droidify',
-      installedAt: DEMO_NOW,
-      autoUpdate: true,
-      pinned: false,
-    },
-    vlc: {
-      appId: 'vlc',
-      version: '3.6.3',
-      sourceId: 'forge',
-      installedAt: DEMO_NOW,
-      autoUpdate: true,
-      pinned: false,
-    },
-    'organic-maps': {
-      appId: 'organic-maps',
-      version: '2026.09.28',
-      sourceId: 'forge',
-      installedAt: DEMO_NOW,
-      autoUpdate: true,
-      pinned: false,
-    },
-  },
-  wishlist: ['ente', 'heroic', 'appflowy', 'aves'],
-  tracked: ['localsend', 'newpipe', 'image-toolbox', 'gadgetbridge'],
+  installed: {},
+  wishlist: [],
+  tracked: [],
   ignoredUpdates: [],
-  collections: INITIAL_COLLECTIONS,
+  collections: [],
   customSources: [],
   externalApps: [],
   sourceEnabled: DEFAULT_SOURCE_ENABLED,
   settings: DEFAULT_SETTINGS,
   queue: [],
   toasts: [],
-  notifications: INITIAL_NOTIFICATIONS,
+  notifications: [],
   onboardingSeen: false,
 };
 
@@ -229,45 +126,39 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
           {
             id: `toast-${action.job.id}`,
             tone: 'info',
-            title: action.job.kind === 'update' ? 'Update queued' : 'Install queued',
-            message: `${action.job.appName} ${action.job.version} is being verified against its source.`,
+            title:
+              action.job.kind === 'update' ? 'Update preview queued' : 'Install preview queued',
+            message: 'This web preview does not download or install packages.',
           },
         ],
       };
     case 'TICK': {
-      const installed = { ...state.installed };
       const toasts = [...state.toasts];
       const notifications = [...state.notifications];
       const queue = state.queue.map((job) => {
         if (job.status !== 'active') return job;
         const nextProgress = Math.min(100, job.progress + 9 + (job.progress % 5));
         if (nextProgress < 100) return { ...job, progress: nextProgress };
-        installed[job.appId] = {
-          appId: job.appId,
-          version: job.version,
-          sourceId: job.sourceId,
-          installedAt: action.now,
-          autoUpdate: state.settings.autoUpdate,
-          pinned: state.installed[job.appId]?.pinned ?? false,
-        };
-        const title = job.kind === 'update' ? 'Update complete' : 'Install complete';
+        const title =
+          job.kind === 'update' ? 'Update preview finished' : 'Install preview finished';
+        const message = `${job.appName} was not downloaded or installed; use the source links to continue on your platform.`;
         toasts.push({
           id: `toast-done-${job.id}`,
-          tone: 'success',
+          tone: 'info',
           title,
-          message: `${job.appName} ${job.version} is now in your local library.`,
+          message,
         });
         notifications.unshift({
           id: `notification-${job.id}`,
           title,
-          message: `${job.appName} ${job.version} completed from the ${job.sourceId} source.`,
+          message,
           createdAt: action.now,
           read: false,
-          tone: 'success',
+          tone: 'info',
         });
         return { ...job, progress: 100, status: 'done' as const };
       });
-      return { ...state, installed, queue, toasts, notifications: notifications.slice(0, 30) };
+      return { ...state, queue, toasts, notifications: notifications.slice(0, 30) };
     }
     case 'CLEAR_COMPLETED':
       return { ...state, queue: state.queue.filter((job) => job.status === 'active') };

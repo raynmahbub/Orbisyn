@@ -1,8 +1,18 @@
 import { type ChangeEvent, type ReactNode, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { setGatewayOverride } from '../../lib/runtime.js';
 import { DynamicIcon, Modal, SectionHeading, Toggle } from '../components/ui.js';
 import { useStore } from '../StoreProvider.jsx';
-import { STORE_STORAGE_KEY } from '../state.js';
+import { persistedState, STORE_STORAGE_KEY } from '../state.js';
+import {
+  createSyncVaultCredentials,
+  decodeSyncPairing,
+  encodeSyncPairing,
+  readSyncVaultCredentials,
+  type SyncVaultCredentials,
+  saveSyncVaultCredentials,
+  syncVaultState,
+} from '../sync-vault.js';
 import type { Settings } from '../types.js';
 
 const THEMES: readonly {
@@ -63,6 +73,12 @@ export function SettingsScreen(): ReactNode {
   const { state, updateSettings, exportState, importState, resetDemo, showToast } = useStore();
   const [saved, setSaved] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [syncVault, setSyncVault] = useState<SyncVaultCredentials | null>(() =>
+    readSyncVaultCredentials(),
+  );
+  const [pairingCode, setPairingCode] = useState('');
+  const [syncBusy, setSyncBusy] = useState(false);
+  const [syncMessage, setSyncMessage] = useState('');
   const fileInput = useRef<HTMLInputElement>(null);
   const settings = state.settings;
 
@@ -114,6 +130,71 @@ export function SettingsScreen(): ReactNode {
     event.target.value = '';
   };
 
+  const saveGateway = (): void => {
+    const value = settings.gatewayUrl.trim();
+    setGatewayOverride(value === '' || value === '/api' ? null : value);
+    window.location.reload();
+  };
+
+  const createVault = (): void => {
+    try {
+      const credentials = createSyncVaultCredentials();
+      saveSyncVaultCredentials(credentials);
+      setSyncVault(credentials);
+      setSyncMessage(
+        'Encrypted vault created on this device. Sync once, then copy the pairing code to another device.',
+      );
+    } catch (error) {
+      setSyncMessage(
+        error instanceof Error ? error.message : 'Secure browser storage is unavailable.',
+      );
+    }
+  };
+
+  const importPairing = (): void => {
+    try {
+      const credentials = decodeSyncPairing(pairingCode);
+      saveSyncVaultCredentials(credentials);
+      setSyncVault(credentials);
+      setPairingCode('');
+      setSyncMessage('Pairing imported. Sync now to merge this device with the encrypted vault.');
+    } catch (error) {
+      setSyncMessage(
+        error instanceof Error ? error.message : 'Pairing code could not be imported.',
+      );
+    }
+  };
+
+  const copyPairing = async (): Promise<void> => {
+    if (syncVault === null) return;
+    try {
+      await navigator.clipboard.writeText(encodeSyncPairing(syncVault));
+      setSyncMessage(
+        'Pairing code copied. Treat it like a password: anyone with it can read and change this vault.',
+      );
+    } catch {
+      setSyncMessage('Clipboard access was blocked. Select and copy the pairing code manually.');
+    }
+  };
+
+  const syncNow = async (): Promise<void> => {
+    setSyncBusy(true);
+    setSyncMessage('Encrypting and synchronizing your library…');
+    try {
+      const credentials = syncVault ?? createSyncVaultCredentials();
+      const result = await syncVaultState(persistedState(state), credentials);
+      saveSyncVaultCredentials(result.credentials);
+      setSyncVault(result.credentials);
+      if (!importState(result.state))
+        throw new Error('The synchronized library could not be applied.');
+      setSyncMessage(`Synced encrypted snapshot revision ${result.credentials.revision}.`);
+    } catch (error) {
+      setSyncMessage(error instanceof Error ? error.message : 'Sync failed.');
+    } finally {
+      setSyncBusy(false);
+    }
+  };
+
   return (
     <div className="os-page os-settings">
       <section className="os-page-hero os-page-hero--settings">
@@ -143,6 +224,9 @@ export function SettingsScreen(): ReactNode {
           </a>
           <a href="#network">
             <DynamicIcon name="wifi" size={17} /> Network
+          </a>
+          <a href="#sync">
+            <DynamicIcon name="cloud" size={17} /> Device sync
           </a>
           <a href="#privacy">
             <DynamicIcon name="fingerprint" size={17} /> Privacy & data
@@ -318,14 +402,17 @@ export function SettingsScreen(): ReactNode {
                 <input
                   value={settings.gatewayUrl}
                   onChange={(event) => change('gatewayUrl', event.target.value)}
-                  placeholder="/api"
+                  placeholder="https://orbisyn.example.org"
                 />
               </div>
               <small>
-                The web preview expects a same-origin gateway. Custom URLs are a native-shell
-                capability.
+                Leave as /api for the current origin. For mobile and desktop shells, enter the
+                gateway origin; API requests use its /api path.
               </small>
             </label>
+            <button type="button" className="os-button os-button--outline" onClick={saveGateway}>
+              <DynamicIcon name="refresh" size={16} /> Save gateway and reconnect
+            </button>
             <div className="os-network-status">
               <span>
                 <DynamicIcon name="radio" size={17} /> Same-origin API
@@ -336,6 +423,92 @@ export function SettingsScreen(): ReactNode {
               <span>
                 <DynamicIcon name="shield" size={17} /> No proxy credentials
               </span>
+            </div>
+          </section>
+
+          <section className="os-settings-card" id="sync">
+            <SectionHeading
+              eyebrow="Your devices"
+              title="End-to-end encrypted sync"
+              description="Pair your own devices with a secret code. The gateway stores ciphertext; only devices holding the pairing key can read your library."
+            />
+            <p className="os-sync-status" role="status" aria-live="polite">
+              {syncMessage ||
+                (syncVault === null
+                  ? 'No sync vault is linked to this device.'
+                  : `Vault ${syncVault.id.slice(0, 8)}… · local revision ${syncVault.revision}`)}
+            </p>
+            <div className="os-data-actions">
+              {syncVault === null ? (
+                <button
+                  type="button"
+                  className="os-button os-button--primary"
+                  onClick={createVault}
+                >
+                  <DynamicIcon name="lock" size={16} /> Create encrypted vault
+                </button>
+              ) : null}
+              <button
+                type="button"
+                className="os-button os-button--outline"
+                onClick={() => void syncNow()}
+                disabled={syncBusy}
+              >
+                <DynamicIcon name={syncBusy ? 'refresh' : 'cloud'} size={16} />
+                {syncBusy ? 'Syncing…' : 'Sync now'}
+              </button>
+              {syncVault !== null ? (
+                <button
+                  type="button"
+                  className="os-button os-button--outline"
+                  onClick={() => void copyPairing()}
+                >
+                  <DynamicIcon name="copy" size={16} /> Copy pairing code
+                </button>
+              ) : null}
+            </div>
+            {syncVault !== null ? (
+              <label className="os-field">
+                Pairing code — keep it private
+                <textarea
+                  readOnly
+                  rows={3}
+                  value={encodeSyncPairing(syncVault)}
+                  aria-label="End-to-end sync pairing code"
+                />
+                <small>
+                  Anyone with this code can access this vault. Share it only through a trusted
+                  channel.
+                </small>
+              </label>
+            ) : null}
+            <label className="os-field">
+              Pair another device
+              <textarea
+                rows={3}
+                value={pairingCode}
+                onChange={(event) => setPairingCode(event.target.value)}
+                placeholder="Paste an orbisyn-sync-v1 pairing code"
+                aria-label="Paste sync pairing code"
+              />
+            </label>
+            <div className="os-data-actions">
+              <button
+                type="button"
+                className="os-button os-button--outline"
+                onClick={importPairing}
+                disabled={pairingCode.trim().length === 0}
+              >
+                <DynamicIcon name="link" size={16} /> Import pairing
+              </button>
+            </div>
+            <div className="os-security-note">
+              <DynamicIcon name="info" size={17} />
+              <p>
+                Pairing is self-hosted and accountless; it is not a hosted sign-in service. Use
+                HTTPS when syncing over an untrusted network. Removing a pairing code from one
+                device does not revoke copies already shared with other devices.
+              </p>
             </div>
           </section>
 

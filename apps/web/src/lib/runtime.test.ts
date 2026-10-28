@@ -34,7 +34,7 @@ describe('resolveRuntimeConfig', () => {
     setGatewayOverride('http://192.168.1.10:8787/');
 
     const config = resolveRuntimeConfig();
-    expect(config.apiBase).toBe('http://192.168.1.10:8787');
+    expect(config.apiBase).toBe('http://192.168.1.10:8787/api');
     expect(getGatewayOverride()).toBe('http://192.168.1.10:8787/');
   });
 
@@ -44,7 +44,7 @@ describe('resolveRuntimeConfig', () => {
     setGatewayOverride(null);
 
     expect(getGatewayOverride()).toBeNull();
-    expect(resolveRuntimeConfig().apiBase).toBe('https://orbisyn.example');
+    expect(resolveRuntimeConfig().apiBase).toBe('https://orbisyn.example/api');
   });
 
   it('ignores a blank override rather than producing an empty base url', () => {

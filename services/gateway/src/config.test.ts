@@ -17,6 +17,8 @@ describe('loadConfig', () => {
     expect(config.corsOrigins).toEqual([]);
     expect(config.forgeTokens).toEqual({});
     expect(config.forgeHosts).toEqual([]);
+    expect(config.storeFile).toBe('./var/orbisyn/store.json');
+    expect(config.syncVaultFile).toBe('./var/orbisyn/sync-vaults.json');
     expect(config.logLevel).toBe('info');
     expect(Object.keys(config)).not.toContain('databaseUrl');
   });
@@ -32,6 +34,7 @@ describe('loadConfig', () => {
       GATEWAY_CACHE_TTL_SECONDS: '900',
       ORBISYN_FORGE_HOSTS: 'forgejo.example.org,git.example.org',
       ORBISYN_WEB_ROOT: '/srv/orbisyn/web',
+      ORBISYN_STORE_FILE: '/srv/orbisyn/data/store.json',
       ORBISYN_VERSION: '1.2.3',
     });
 
@@ -47,6 +50,7 @@ describe('loadConfig', () => {
     expect(config.cacheTtlSeconds).toBe(900);
     expect(config.forgeHosts).toEqual(['forgejo.example.org', 'git.example.org']);
     expect(config.webRoot).toBe('/srv/orbisyn/web');
+    expect(config.storeFile).toBe('/srv/orbisyn/data/store.json');
     expect(config.buildVersion).toBe('1.2.3');
   });
 

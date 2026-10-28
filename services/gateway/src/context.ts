@@ -13,6 +13,7 @@ import type {
 import type { GatewayConfig } from './config.js';
 import type { ProviderHealthTracker } from './provider-health.js';
 import type { StoreKind } from './store/index.js';
+import type { SyncVaultStore } from './sync-vault.js';
 
 /**
  * Composition root.
@@ -30,6 +31,7 @@ export interface GatewayContext {
   readonly cache: CachePort;
   readonly store: AppStorePort;
   readonly storeKind: StoreKind;
+  readonly syncVaults: SyncVaultStore;
   readonly registry: ProviderRegistryPort;
   readonly providerHealth: ProviderHealthTracker;
   readonly startedAt: number;

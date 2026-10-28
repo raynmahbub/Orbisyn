@@ -68,13 +68,16 @@ export function UpdatesScreen(): ReactNode {
         <div>
           <span className="os-eyebrow">Stay current, stay in control</span>
           <h1>
-            {updates.length > 0
-              ? `${updates.length} updates are ready.`
-              : 'Everything is up to date.'}
+            {installedApps.length === 0
+              ? 'Nothing to update yet.'
+              : updates.length > 0
+                ? `${updates.length} updates are ready.`
+                : 'Everything is up to date.'}
           </h1>
           <p>
-            Updates follow the source that installed each app. Review changelogs, skip a release, or
-            update everything at once.
+            {installedApps.length === 0
+              ? 'Import an existing library or add a verified app before checking for updates. First-run state does not invent installed apps.'
+              : 'Updates follow each saved source. Preview versions are labelled; review a live source before downloading anything.'}
           </p>
           <div className="os-page-hero__actions">
             <button
@@ -89,7 +92,7 @@ export function UpdatesScreen(): ReactNode {
               type="button"
               className="os-button os-button--outline os-button--lg"
               onClick={() => void checkSources()}
-              disabled={checking}
+              disabled={checking || installedApps.length === 0}
             >
               <DynamicIcon
                 name={checking ? 'refresh' : 'radio'}
@@ -162,8 +165,14 @@ export function UpdatesScreen(): ReactNode {
         {updates.length === 0 ? (
           <EmptyState
             icon="checkCircle"
-            title="You’re all caught up"
-            message="No pending updates for the apps in your local library."
+            title={
+              installedApps.length === 0 ? 'No apps in your library yet' : 'You’re all caught up'
+            }
+            message={
+              installedApps.length === 0
+                ? 'Apps appear here only after you import or otherwise register an installed app.'
+                : 'No pending updates for the apps in your local library.'
+            }
             action={
               <Link to="/explore" className="os-button os-button--primary">
                 Discover more apps

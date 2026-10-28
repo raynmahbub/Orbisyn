@@ -217,11 +217,11 @@ export function CommandPalette({
 }
 
 function jobStage(job: InstallJob): string {
-  if (job.status === 'done') return 'Complete';
-  if (job.progress < 25) return 'Verifying source and signature';
-  if (job.progress < 72) return 'Fetching signed artifact';
-  if (job.progress < 96) return 'Preparing local install';
-  return 'Finalising';
+  if (job.status === 'done') return 'Preview complete · nothing installed';
+  if (job.progress < 25) return 'Preparing a simulated handoff';
+  if (job.progress < 72) return 'Native installer unavailable in this browser';
+  if (job.progress < 96) return 'No artifact is downloaded by this preview';
+  return 'Finishing the handoff preview';
 }
 
 export function InstallQueue({
@@ -245,7 +245,7 @@ export function InstallQueue({
       <aside className="os-drawer" aria-label="Install queue">
         <header>
           <div>
-            <span className="os-eyebrow">Local install manager</span>
+            <span className="os-eyebrow">Web handoff preview</span>
             <h2>Install queue</h2>
           </div>
           <button
@@ -269,8 +269,8 @@ export function InstallQueue({
         {state.queue.length === 0 ? (
           <EmptyState
             icon="packageCheck"
-            title="Nothing is downloading"
-            message="Installs and updates you start will show their verification and download progress here."
+            title="No handoff previews yet"
+            message="Queued install actions show the native handoff preview here. This browser does not download or install packages."
           />
         ) : (
           <div className="os-queue-list">

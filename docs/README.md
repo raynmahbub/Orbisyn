@@ -7,7 +7,9 @@
 | [architecture/gateway](./architecture/gateway.md) | The HTTP surface: routes, validation, errors, static client, lifecycle |
 | [architecture/data-model](./architecture/data-model.md) | `AppRecord`, releases, artifacts, health scoring, identity |
 | [architecture/configuration](./architecture/configuration.md) | Every environment variable, with defaults |
-| [architecture/persistence](./architecture/persistence.md) | The `AppStorePort`, the in-memory backend, and what durability requires |
+| [architecture/persistence](./architecture/persistence.md) | The `AppStorePort`, atomic file-backed state, backups, and single-instance limits |
+| [architecture/sync-vault](./architecture/sync-vault.md) | Self-hosted end-to-end encrypted device pairing, vault API, and hosted-account limits |
+| [architecture/native-clients](./architecture/native-clients.md) | Capacitor iOS/Android apps and Tauri Windows/macOS/Linux desktop shells |
 | [architecture/testing](./architecture/testing.md) | Test layout, fakes, coverage policy, what is deliberately not tested |
 | [providers/](./providers/README.md) | The provider contract, detection order, capability matrix |
 | [protocol/osp](./protocol/osp.md) | The `osp://` scheme and the `orbisyn.json` manifest |

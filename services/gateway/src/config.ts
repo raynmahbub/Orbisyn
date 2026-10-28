@@ -5,8 +5,8 @@ import { z } from 'zod';
  *
  * Parsed once, at boot, with a schema — a mistyped port or a stray space in a
  * token must fail the deployment immediately, not the first request at 03:00.
- * Absent optional values produce the documented local defaults (in-memory cache
- * and store) so `npm run dev` works on a clean checkout.
+ * Absent optional values produce the documented local defaults so `npm run dev`
+ * works on a clean checkout. Runtime state uses a durable local file by default.
  *
  * The environment names live in one table (`ENV_VAR_MAP`) because a variable
  * that the process reads but nobody documents — or documents but never reads —
@@ -64,6 +64,10 @@ export const GatewayConfigSchema = z.object({
   forgeHosts: CsvSchema,
   /** Directory holding a built web client; served when it exists. */
   webRoot: z.string().min(1).optional(),
+  /** File-backed application store; relative paths resolve from the process cwd. */
+  storeFile: z.string().min(1).default('./var/orbisyn/store.json'),
+  /** Opaque encrypted cross-device snapshots; relative paths resolve from cwd. */
+  syncVaultFile: z.string().min(1).default('./var/orbisyn/sync-vaults.json'),
   buildVersion: z.string().min(1).default('0.1.0-dev.0'),
 });
 
@@ -89,6 +93,8 @@ export const ENV_VAR_MAP = {
   ORBISYN_FORGE_TOKENS: 'forgeTokens',
   ORBISYN_FORGE_HOSTS: 'forgeHosts',
   ORBISYN_WEB_ROOT: 'webRoot',
+  ORBISYN_STORE_FILE: 'storeFile',
+  ORBISYN_SYNC_VAULT_FILE: 'syncVaultFile',
   ORBISYN_VERSION: 'buildVersion',
 } as const satisfies Record<string, keyof GatewayConfig>;
 

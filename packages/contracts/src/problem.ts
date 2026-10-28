@@ -43,6 +43,6 @@ export const HealthStatusSchema = z.object({
       lastFailureAt: z.iso.datetime({ offset: true }).nullable(),
     }),
   ),
-  store: z.enum(['memory', 'postgres']),
+  store: z.enum(['memory', 'file', 'postgres']),
 });
 export type HealthStatus = z.infer<typeof HealthStatusSchema>;

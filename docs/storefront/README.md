@@ -15,7 +15,7 @@ visible.
 | --- | --- | --- |
 | `/` | Discover | Hero, source-mesh summary, spotlight, featured/trending/fresh shelves, category shortcuts, editor picks, trust and CTA sections. |
 | `/explore` | Explore | URL-driven query, platform, category, source, open-source, verified and enabled-source filters; sorting; comparison tray/modal for up to three apps. |
-| `/app/:appId` | App detail | Galleries, overview, release history, security evidence, source alternatives, preferred source, install/update, wishlist, tracking, collections, sharing and **Verify live source**. |
+| `/app/:appId` | App detail | Galleries, overview, release history, security evidence, source alternatives, preferred source, disclosed install/update handoff preview, wishlist, tracking, collections, sharing and **Verify live source**. |
 | `/updates` | Updates | Pending updates, ignore, auto-update/Wi-Fi policies, live source sampling and update-all queue. |
 | `/library` | Library | Installed apps, wishlist, tracking, collections, imported external references, local backup export/import and reset. |
 | `/sources` | Sources | Seven compatibility bridges, enable/disable toggles, custom HTTPS source form, live verification, Obtainium/OSP JSON imports and F-Droid/Aurora templates. |
@@ -66,11 +66,14 @@ can be exported/imported from Settings or Library. Import accepts both the
 versioned backup envelope and a bare persisted-state object. No account and no
 telemetry are required.
 
-The web preview simulates the native package-manager handoff: queue progress,
-verification stages, completion notifications and installed-library updates are
-real local state, but no installer is downloaded or executed. Native installer
-backends (system, session, Shizuku/Dhizuku, root, download-only) are selectable
-settings for a future OS shell.
+The web preview does not have a native package-manager adapter. Its queue is a
+clearly disclosed handoff preview: it does not verify, download, execute, or mark
+an app as installed. After live verification, upstream artifact links can be
+opened or downloaded manually; published hashes and signatures are displayed as
+upstream evidence, not checked against downloaded bytes. Native installer
+backends (system, session, Shizuku/Dhizuku, root, download-only) remain settings
+for a future OS shell. First-run libraries, wishlists, tracking, and collections
+start empty rather than showing sample data as if it belonged to the user.
 
 ## Accessibility and responsiveness
 

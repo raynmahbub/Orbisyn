@@ -21,10 +21,11 @@ table against `.env.example` in both directions, so the two cannot drift.
 | --- | --- | --- |
 | `GATEWAY_HOST` | `0.0.0.0` | Bind address. |
 | `GATEWAY_PORT` | `8787` | `0` asks the OS for a free port (used by tests and embedded runs). |
-| `GATEWAY_CORS_ORIGINS` | *(none)* | Comma-separated allowlist; `*` allows any origin. Not needed when the client is served from this origin. |
+| `GATEWAY_CORS_ORIGINS` | *(none)* | Comma-separated allowlist; `*` allows any origin. For native shells connecting to a different gateway origin, add the Capacitor/Tauri app origins documented in [native clients](./native-clients.md). |
 | `GATEWAY_RATE_LIMIT_MAX` | `120` | Requests per window per address; `0` disables the limiter. |
 | `GATEWAY_RATE_LIMIT_WINDOW_MS` | `60000` | Minimum 1000. |
 | `ORBISYN_WEB_ROOT` | `apps/web/dist` | Directory holding a built client. Skipped when it does not exist, which is how the API-only development server works. |
+| `ORBISYN_STORE_FILE` | `./var/orbisyn/store.json` | Durable JSON snapshot for resolved records, releases, collections, and sync cursor. Keep this path on persistent storage and back it up. |
 
 ## Outbound HTTP
 

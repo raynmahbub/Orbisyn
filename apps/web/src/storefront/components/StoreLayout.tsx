@@ -1,13 +1,5 @@
-import {
-  type CSSProperties,
-  type FormEvent,
-  type ReactNode,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { type CSSProperties, type FormEvent, type ReactNode, useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { appsWithUpdates } from '../data/catalog.js';
 import { BRIDGES } from '../data/sources.js';
 import { useGatewayStatus } from '../hooks.js';
 import { useStore } from '../StoreProvider.jsx';
@@ -85,10 +77,9 @@ export function StoreLayout(): ReactNode {
     return () => window.removeEventListener('keydown', onKey);
   }, [commandOpen]);
 
-  const updateCount = useMemo(
-    () => appsWithUpdates().filter((app) => !state.ignoredUpdates.includes(app.id)).length,
-    [state.ignoredUpdates],
-  );
+  const updateCount = state.queue.filter(
+    (job) => job.kind === 'update' && job.status === 'active',
+  ).length;
   const activeJobs = state.queue.filter((job) => job.status === 'active').length;
   const unread = state.notifications.filter((notification) => !notification.read).length;
   const enabledSources = BRIDGES.filter((bridge) => state.sourceEnabled[bridge.id] === true);

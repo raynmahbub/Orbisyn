@@ -29,7 +29,9 @@ FROM node:22-alpine AS runtime
 
 ENV NODE_ENV=production \
     GATEWAY_HOST=0.0.0.0 \
-    GATEWAY_PORT=8787
+    GATEWAY_PORT=8787 \
+    ORBISYN_STORE_FILE=/data/orbisyn.json \
+    ORBISYN_SYNC_VAULT_FILE=/data/sync-vaults.json
 
 WORKDIR /app
 
@@ -49,8 +51,9 @@ RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=builder /app/services/gateway/dist services/gateway/dist
 COPY --from=builder /app/apps/web/dist apps/web/dist
 
-# The gateway resolves apps/web/dist relative to its own bundle, so the layout
-# above is all it needs. Nothing is written to disk at runtime.
+# The named compose volume is mounted here. The non-root runtime user needs
+# ownership so the file-backed store can atomically persist its snapshot.
+RUN mkdir -p /data && chown node:node /data
 USER node
 
 EXPOSE 8787

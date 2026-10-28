@@ -49,42 +49,41 @@ beforeEach(() => {
 });
 
 describe('storefront reducer', () => {
-  it('queues an install, completes its ticks and records the local library entry', () => {
+  it('starts first-run state without fabricated installations, favorites, or collections', () => {
+    expect(INITIAL_STATE.installed).toEqual({});
+    expect(INITIAL_STATE.wishlist).toEqual([]);
+    expect(INITIAL_STATE.tracked).toEqual([]);
+    expect(INITIAL_STATE.collections).toEqual([]);
+  });
+
+  it('completes the disclosed install preview without claiming a real installation', () => {
     const queued = storeReducer(INITIAL_STATE, { type: 'START_JOB', job: job('install', 'job-1') });
     expect(queued.queue).toHaveLength(1);
-    expect(queued.toasts.at(-1)?.title).toBe('Install queued');
+    expect(queued.toasts.at(-1)?.title).toBe('Install preview queued');
 
     const completed = finishJobs(queued);
     expect(completed.queue[0]?.status).toBe('done');
-    expect(completed.installed.localsend).toMatchObject({
-      appId: 'localsend',
-      version: '1.17.0',
-      sourceId: 'forge',
-      autoUpdate: true,
-    });
-    expect(completed.notifications[0]?.title).toBe('Install complete');
+    expect(completed.installed.localsend).toBeUndefined();
+    expect(completed.toasts.at(-1)?.title).toBe('Install preview finished');
+    expect(completed.notifications[0]?.message).toMatch(/not downloaded or installed/);
   });
 
-  it('distinguishes update jobs from installs', () => {
+  it('distinguishes update previews without changing the installed library', () => {
     const queued = storeReducer(INITIAL_STATE, { type: 'START_JOB', job: job('update', 'job-2') });
-    expect(queued.toasts.at(-1)?.title).toBe('Update queued');
+    expect(queued.toasts.at(-1)?.title).toBe('Update preview queued');
 
     const completed = finishJobs(queued);
-    expect(completed.notifications[0]?.title).toBe('Update complete');
-    expect(completed.installed.localsend?.version).toBe('1.17.0');
+    expect(completed.notifications[0]?.title).toBe('Update preview finished');
+    expect(completed.installed.localsend).toBeUndefined();
   });
 
-  it('toggles wishlist entries without mutating the initial state', () => {
-    const removed = storeReducer(INITIAL_STATE, {
-      type: 'TOGGLE_WISHLIST',
-      appId: 'ente',
-    });
-    const added = storeReducer(removed, { type: 'TOGGLE_WISHLIST', appId: 'blender' });
+  it('toggles wishlist entries without mutating the empty first-run state', () => {
+    const added = storeReducer(INITIAL_STATE, { type: 'TOGGLE_WISHLIST', appId: 'ente' });
+    const removed = storeReducer(added, { type: 'TOGGLE_WISHLIST', appId: 'ente' });
 
+    expect(added.wishlist).toContain('ente');
     expect(removed.wishlist).not.toContain('ente');
-    expect(added.wishlist).toContain('blender');
-    expect(INITIAL_STATE.wishlist).toContain('ente');
-    expect(INITIAL_STATE.wishlist).not.toContain('blender');
+    expect(INITIAL_STATE.wishlist).toEqual([]);
   });
 
   it('merges settings patches and updates custom source verification state', () => {

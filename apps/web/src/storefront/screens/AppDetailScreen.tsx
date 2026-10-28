@@ -1,3 +1,4 @@
+import { formatBytes } from '@orbisyn/core';
 import { type CSSProperties, type ReactNode, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -367,16 +368,65 @@ export function AppDetailScreen(): ReactNode {
                     <h3>
                       <DynamicIcon name="radio" size={17} /> Live upstream releases
                     </h3>
-                    {live.releases.slice(0, 8).map((release) => (
-                      <div key={release.id}>
-                        <strong>{release.version}</strong>
-                        <span>{release.channel}</span>
-                        <span>{new Date(release.publishedAt).toLocaleDateString()}</span>
-                        <Link to={release.sourceUrl} target="_blank" rel="noreferrer">
-                          Source <DynamicIcon name="external" size={13} />
-                        </Link>
-                      </div>
-                    ))}
+                    {live.releases.slice(0, 8).map((release) => {
+                      const artifacts = release.artifacts.filter(
+                        (artifact) => !artifact.listingOnly,
+                      );
+                      return (
+                        <article key={release.id}>
+                          <div className="os-live-release__meta">
+                            <strong>{release.version}</strong>
+                            <span>{release.channel}</span>
+                            <span>{new Date(release.publishedAt).toLocaleDateString()}</span>
+                            <Link to={release.sourceUrl} target="_blank" rel="noopener noreferrer">
+                              Source <DynamicIcon name="external" size={13} />
+                            </Link>
+                          </div>
+                          {artifacts.length > 0 ? (
+                            <ul className="os-live-release__artifacts">
+                              {artifacts.map((artifact) => (
+                                <li key={artifact.url}>
+                                  <a
+                                    href={artifact.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label={`Download ${artifact.fileName ?? `${artifact.platform} ${artifact.architecture} artifact`}`}
+                                  >
+                                    <DynamicIcon name="download" size={14} />
+                                    {artifact.fileName ??
+                                      `${artifact.platform} ${artifact.architecture} artifact`}
+                                    {artifact.sizeBytes === undefined
+                                      ? ''
+                                      : ` · ${formatBytes(artifact.sizeBytes)}`}
+                                  </a>
+                                  <span className="os-live-release__evidence">
+                                    {artifact.checksum === undefined ? (
+                                      'No published checksum'
+                                    ) : (
+                                      <code>
+                                        {artifact.checksum.algorithm.toUpperCase()}{' '}
+                                        {artifact.checksum.value}
+                                      </code>
+                                    )}
+                                    {artifact.signature === undefined
+                                      ? ' · No published signature'
+                                      : ` · ${artifact.signature.scheme} signature published`}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="os-live-release__empty">
+                              No downloadable artifacts published.
+                            </p>
+                          )}
+                        </article>
+                      );
+                    })}
+                    <p className="os-live-release__notice">
+                      These links go directly to upstream. Published checksums are shown as
+                      evidence; this web preview does not verify downloaded bytes or run installers.
+                    </p>
                   </div>
                 ) : null}
               </section>

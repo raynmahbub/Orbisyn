@@ -1,0 +1,25 @@
+{
+  "name": "@orbisyn/mobile",
+  "version": "0.1.0-dev.0",
+  "private": true,
+  "description": "Orbisyn iOS and Android native shells powered by the shared storefront.",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build --workspace @orbisyn/web && cap sync",
+    "sync": "cap sync",
+    "open:ios": "cap open ios",
+    "open:android": "cap open android",
+    "run:ios": "cap run ios",
+    "run:android": "cap run android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/browser": "^8.0.5",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.3"
+  }
+}

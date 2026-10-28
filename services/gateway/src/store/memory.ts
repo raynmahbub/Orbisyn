@@ -13,17 +13,30 @@ import { compareVersions, toSummary } from '@orbisyn/core';
 /**
  * In-memory store.
  *
- * This is the default backend and a first-class one, not a stub: a single-user
- * self-hosted Orbisyn needs no database at all, and the resolution cache plus
- * this store make the gateway useful the moment it starts.
+ * This adapter is the fast ephemeral implementation for tests and embedded
+ * callers. The normal gateway composes it with the file adapter, which persists
+ * validated snapshots between restarts.
  *
  * Search is a linear scan with token matching. That is the honest choice at this
  * scale: an index would add failure modes without changing any user-visible
  * behaviour until the catalogue is far larger than a curated one.
  */
+export interface MemoryStoreSnapshot {
+  readonly version: 1;
+  readonly apps: readonly {
+    readonly app: AppRecord;
+    readonly releases: readonly Release[];
+  }[];
+  readonly collections: readonly Collection[];
+  readonly syncCursor: number;
+}
+
 export interface MemoryStore extends AppStorePort {
   readonly size: () => number;
   readonly all: () => readonly AppRecord[];
+  /** Snapshot and restore are used by the durable file adapter. */
+  readonly snapshot: () => MemoryStoreSnapshot;
+  readonly restore: (snapshot: MemoryStoreSnapshot) => void;
 }
 
 export function createMemoryStore(options: { maxApps?: number } = {}): MemoryStore {
@@ -82,6 +95,31 @@ export function createMemoryStore(options: { maxApps?: number } = {}): MemorySto
   return {
     size: () => apps.size,
     all: () => [...apps.values()],
+    snapshot: () => ({
+      version: 1,
+      apps: [...apps.values()].map((app) => ({
+        app,
+        releases: [...(releases.get(app.id) ?? [])],
+      })),
+      collections: [...collections.values()],
+      syncCursor,
+    }),
+    restore(snapshot) {
+      if (snapshot.apps.length > maxApps) {
+        throw new RangeError(`snapshot contains more than ${maxApps} apps`);
+      }
+      apps.clear();
+      releases.clear();
+      collections.clear();
+      for (const entry of snapshot.apps) {
+        apps.set(entry.app.id, entry.app);
+        releases.set(entry.app.id, [...entry.releases]);
+      }
+      for (const collection of snapshot.collections) {
+        collections.set(collection.id, collection);
+      }
+      syncCursor = snapshot.syncCursor;
+    },
 
     async saveApp(app, appReleases) {
       if (!apps.has(app.id) && apps.size >= maxApps) {

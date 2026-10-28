@@ -11,7 +11,7 @@ services/gateway/src
 ├── config.ts          environment schema (see configuration.md)
 ├── context.ts         the assembled dependencies passed to every route
 ├── routes/            system · resolve · osp · library
-├── store/             store composition, in-memory backend
+├── store/             store composition, memory + durable file backends
 ├── errors.ts          DomainError → HTTP status → ApiError envelope
 ├── outbound.ts        validates responses before they leave the process
 ├── provider-health.ts per-provider success/failure tracker behind /api/health
@@ -117,8 +117,8 @@ guessing.
 consecutive failures mark a provider degraded and `/api/health` reports `degraded`
 with the per-provider state and the timestamp of the last failure. The endpoint
 itself never calls upstream — a monitoring system can poll it during an outage.
-`store` reports the backend actually composed (`memory` today), which is how an
-operator confirms what a running instance mounted.
+`store` reports the backend actually composed (`file` in normal gateway runs,
+`memory` in tests), so an operator can confirm the active persistence mode.
 
 ## Process contract
 

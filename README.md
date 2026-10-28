@@ -52,7 +52,21 @@ what is live, what is bridged, what is custom and what needs a companion session
 **Honesty is a feature.** Curated listing versions, sizes and screenshots are
 labelled `demo*` preview metadata. “Verify live source” fetches real facts from
 the provider engine. Licenses, signatures, checksums, source lineage and missing
-evidence are shown as published — never invented.
+evidence are shown as published — never invented. First-run library state is
+empty; Orbisyn does not seed sample apps as if they were installed on your device.
+
+The browser install queue is a disclosed native-handoff preview: it does not
+install apps, mark them as installed, or verify downloaded bytes. The iOS and
+Android Capacitor apps and the Windows/macOS/Linux Tauri desktop shell package
+the same storefront and add native lifecycle and external-link handling. They
+still do not silently install arbitrary packages or perform automatic updates;
+those require separately reviewed OS-specific installer agents. See
+[native client build instructions](docs/architecture/native-clients.md).
+
+Cross-device sync is available as a self-hosted, end-to-end encrypted pairing
+vault from Settings. The gateway stores only ciphertext; hosted user accounts
+and account recovery are not implemented. Keep the pairing code private and
+back up the sync-vault data volume. See [sync vault documentation](docs/architecture/sync-vault.md).
 
 ## Quick start
 
@@ -94,6 +108,12 @@ cp .env.example .env
 docker compose -f infra/docker/compose.yaml up --build
 ```
 
+The gateway persists resolved records, releases, collections, and sync cursors to
+`ORBISYN_STORE_FILE` (default `./var/orbisyn/store.json`). Compose mounts a named
+volume for that data; back it up before moving or replacing the deployment. See
+[configuration](docs/architecture/configuration.md) and
+[persistence notes](docs/architecture/persistence.md).
+
 Optional tokens lift upstream rate limits and unlock private repositories — see
 [configuration](docs/architecture/configuration.md). Orbisyn works anonymously
 without them; a token just means fewer `429`s.
@@ -102,10 +122,12 @@ without them; a token just means fewer `429`s.
 
 The web client is a PWA. On iOS, open the deployment in Safari and choose
 **Share → Add to Home Screen**; on Android, use the install prompt in Chrome.
-The manifest shortcuts open Explore, Updates, Library and Sources. Native OS
+The manifest shortcuts open Explore, Updates, Library and Sources. For packaged
+native clients, build the Capacitor iOS/Android projects or the Tauri desktop app
+using [the native client guide](docs/architecture/native-clients.md). Native OS
 installer backends — system, session, Shizuku/Dhizuku, root and download-only —
-are explicit settings/handoffs in this web preview; a native Orbisyn shell would
-execute them on-device.
+are not implemented yet; the clients still use clearly labeled upstream
+handoffs.
 
 ## Repository layout
 
@@ -117,6 +139,8 @@ packages/osp         the presence document and identity scheme
 packages/sdk         typed, zod-validated client for the gateway
 services/gateway     Fastify service: API, static client, process lifecycle
 apps/web             React + Vite PWA: storefront at /, console at /console
+apps/mobile          Capacitor native shells for iOS and Android
+apps/desktop         Tauri native shell for Windows, macOS and Linux
 docs/                architecture, providers, protocol, storefront, design, ADRs
 infra/docker         image and compose file for self-hosting
 design/brand         logo, app icon and wordmark

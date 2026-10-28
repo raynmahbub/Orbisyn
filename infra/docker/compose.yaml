@@ -22,6 +22,10 @@ services:
       GATEWAY_HOST: 0.0.0.0
       GATEWAY_PORT: '8787'
       GATEWAY_CORS_ORIGINS: '${GATEWAY_CORS_ORIGINS:-}'
+      ORBISYN_STORE_FILE: /data/orbisyn.json
+      ORBISYN_SYNC_VAULT_FILE: /data/sync-vaults.json
+    volumes:
+      - orbisyn-data:/data
     read_only: true
     tmpfs:
       - /tmp
@@ -42,3 +46,6 @@ services:
       options:
         max-size: 10m
         max-file: '3'
+
+volumes:
+  orbisyn-data:

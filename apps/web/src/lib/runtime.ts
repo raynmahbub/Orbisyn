@@ -27,20 +27,20 @@ export function resolveRuntimeConfig(): RuntimeConfig {
   const environment = import.meta.env.DEV ? 'development' : 'production';
 
   if (override !== null) {
-    return { apiBase: trimSlash(override), gatewayUrl: override, environment };
+    return { apiBase: withApiPrefix(override), gatewayUrl: stripApiPrefix(override), environment };
   }
 
   if (injected?.apiBase !== undefined) {
     return {
-      apiBase: trimSlash(injected.apiBase),
-      gatewayUrl: injected.gatewayUrl ?? injected.apiBase,
+      apiBase: withApiPrefix(injected.apiBase),
+      gatewayUrl: injected.gatewayUrl ?? stripApiPrefix(injected.apiBase),
       environment,
     };
   }
 
   // Development talks to the Vite proxy so the browser sees a single origin.
   return {
-    apiBase: environment === 'development' ? '/api' : '',
+    apiBase: '/api',
     gatewayUrl: location.origin,
     environment,
   };
@@ -70,4 +70,13 @@ function readOverride(): string | null {
 
 function trimSlash(value: string): string {
   return value.replace(/\/+$/, '');
+}
+
+function withApiPrefix(value: string): string {
+  const normalized = trimSlash(value);
+  return /\/api$/i.test(normalized) ? normalized : `${normalized}/api`;
+}
+
+function stripApiPrefix(value: string): string {
+  return trimSlash(value).replace(/\/api$/i, '');
 }

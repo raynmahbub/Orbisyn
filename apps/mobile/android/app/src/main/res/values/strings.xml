@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Orbisyn</string>
+    <string name="title_activity_main">Orbisyn</string>
+    <string name="package_name">org.orbisyn.store</string>
+    <string name="custom_url_scheme">org.orbisyn.store</string>
+</resources>

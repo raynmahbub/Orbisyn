@@ -1803,14 +1803,52 @@
   font-size: 13px;
 }
 
-.os-live-releases > div {
+.os-live-releases > article {
   display: grid;
-  grid-template-columns: 1.2fr 0.7fr 0.8fr auto;
-  gap: 10px;
-  padding: 9px 14px;
+  gap: 8px;
+  padding: 12px 14px;
   background: var(--os-panel-solid);
   color: var(--os-text-soft);
+  font-size: 11px;
+}
+
+.os-live-release__meta {
+  display: grid;
+  grid-template-columns: 1.2fr 0.7fr 0.8fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.os-live-release__artifacts {
+  display: grid;
+  gap: 7px;
+  padding-top: 8px;
+  border-top: 1px solid var(--os-border);
+  list-style: none;
+}
+
+.os-live-release__artifacts li {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.os-live-release__evidence,
+.os-live-release__empty,
+.os-live-release__notice {
+  color: var(--os-text-muted);
   font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.os-live-release__evidence code {
+  color: var(--os-text-soft);
+  font-size: 9px;
+}
+
+.os-live-release__notice {
+  padding: 10px 14px;
+  background: var(--os-panel-solid);
 }
 
 .os-live-releases a {

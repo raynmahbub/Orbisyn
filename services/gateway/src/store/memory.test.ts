@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { createMemoryStore } from './memory.js';
 
 /**
- * The in-memory store is the default backend for a self-hosted instance, so its
- * behaviour — ranking, filtering, pagination, eviction and the sync handshake —
- * is product behaviour, not an implementation detail.
+ * The in-memory adapter is the fast deterministic backend used by tests and
+ * embedded callers. Its ranking, filtering, pagination, eviction, and sync
+ * behaviour are shared with the durable file backend.
  */
 
 function app(overrides: Partial<AppRecord> & { id: string }): AppRecord {

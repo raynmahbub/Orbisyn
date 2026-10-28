@@ -2110,6 +2110,9 @@ body[data-density="compact"] .os-section {
     align-items: flex-start;
     flex-wrap: wrap;
   }
+  .os-live-release__meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .os-detail-section {
     padding: 18px;
   }
