@@ -15,7 +15,8 @@
     "tooling/*"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace @orbisyn/web",
+    "dev": "concurrently -k -n gateway,web -c cyan,magenta \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:web": "npm run dev --workspace @orbisyn/web",
     "dev:api": "npm run dev --workspace @orbisyn/gateway",
     "build": "npm run build --workspace @orbisyn/gateway && npm run build --workspace @orbisyn/web",
     "start": "npm run start --workspace @orbisyn/gateway",
@@ -29,12 +30,14 @@
     "selfhost": "npm run build && npm run start",
     "build:api": "npm run build --workspace @orbisyn/gateway",
     "build:web": "npm run build --workspace @orbisyn/web",
-    "preview": "npm run preview --workspace @orbisyn/web"
+    "preview": "npm run build && npm run start",
+    "preview:web": "npm run preview --workspace @orbisyn/web"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",
     "@types/node": "26.6.3",
     "@vitest/coverage-v8": "^5.0.2",
+    "concurrently": "^9.2.1",
     "typescript": "5.9.3",
     "vitest": "5.0.2"
   }

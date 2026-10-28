@@ -2,6 +2,7 @@
 
 | Document | What it covers |
 | --- | --- |
+| [storefront/](./storefront/README.md) | Orbisyn Store: routes, source mesh, local state, preview boundaries and QA |
 | [architecture/overview](./architecture/overview.md) | How the pieces fit together, and where a change belongs |
 | [architecture/gateway](./architecture/gateway.md) | The HTTP surface: routes, validation, errors, static client, lifecycle |
 | [architecture/data-model](./architecture/data-model.md) | `AppRecord`, releases, artifacts, health scoring, identity |

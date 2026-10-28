@@ -1,5 +1,13 @@
 # Brand
 
+**Orbisyn** — *Every source. One orbit.*
+
+The name combines *orbit* (many independent sources held in one understandable
+system) with *syn* (synthesis). The mark is a ring, a core and one satellite: a
+catalog of apps with visible source lineage, not a single walled garden. The
+consumer storefront uses this identity at `/`; the resolver console at `/console`
+is the technical counterpart.
+
 Three files, all of them vector, no rasters to keep in sync:
 
 | File | Use |

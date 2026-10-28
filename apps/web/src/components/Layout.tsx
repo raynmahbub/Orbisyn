@@ -14,11 +14,10 @@ import {
 import { Badge } from './primitives.js';
 
 /**
- * Application shell.
+ * Resolver console shell.
  *
- * One navigation definition drives both the desktop sidebar and the phone tab
- * bar, so the two can never disagree — a class of bug that is invisible until a
- * user on the other form factor reports it.
+ * The consumer store lives at `/`; this layout is mounted under `/console` and
+ * keeps the original upstream-resolution tooling available for auditing.
  */
 interface NavItem {
   readonly to: string;
@@ -29,13 +28,13 @@ interface NavItem {
 }
 
 const NAV: readonly NavItem[] = [
-  { to: '/', label: 'Home', icon: HomeIcon, end: true, inTabBar: true },
-  { to: '/search', label: 'Search', icon: SearchIcon, inTabBar: true },
-  { to: '/updates', label: 'Updates', icon: UpdatesIcon, inTabBar: true },
-  { to: '/library', label: 'Library', icon: LibraryIcon, inTabBar: true },
-  { to: '/providers', label: 'Providers', icon: PlugIcon },
-  { to: '/protocol', label: 'OSP', icon: ShieldIcon },
-  { to: '/settings', label: 'Settings', icon: SettingsIcon, inTabBar: true },
+  { to: '/console', label: 'Home', icon: HomeIcon, end: true, inTabBar: true },
+  { to: '/console/search', label: 'Search', icon: SearchIcon, inTabBar: true },
+  { to: '/console/updates', label: 'Updates', icon: UpdatesIcon, inTabBar: true },
+  { to: '/console/library', label: 'Library', icon: LibraryIcon, inTabBar: true },
+  { to: '/console/providers', label: 'Providers', icon: PlugIcon },
+  { to: '/console/protocol', label: 'OSP', icon: ShieldIcon },
+  { to: '/console/settings', label: 'Settings', icon: SettingsIcon, inTabBar: true },
 ];
 
 export function Layout() {
@@ -44,12 +43,13 @@ export function Layout() {
   const degraded = health.data?.status === 'degraded';
 
   return (
-    <div className="shell">
+    <div className="shell console-shell">
       <header className="topbar">
-        <NavLink to="/" className="brand" aria-label="Orbisyn home">
+        <NavLink to="/" className="brand" aria-label="Orbisyn store home">
           <span className="brand__mark" />
           <span>Orbisyn</span>
         </NavLink>
+        <span className="badge badge--neutral">Developer console</span>
         <span className="spacer" />
         {health.isSuccess && (
           <Badge tone={degraded ? 'warning' : 'success'}>
@@ -57,8 +57,15 @@ export function Layout() {
           </Badge>
         )}
         {health.isError && <Badge tone="warning">offline</Badge>}
-        <NavLink to="/settings" className="button button--ghost button--sm" aria-label="Settings">
+        <NavLink
+          to="/settings"
+          className="button button--ghost button--sm"
+          aria-label="Store settings"
+        >
           <SettingsIcon size={18} />
+        </NavLink>
+        <NavLink to="/" className="button button--primary button--sm">
+          Back to store
         </NavLink>
       </header>
 

@@ -22,7 +22,7 @@ cross-package leakage.
 | `osp` | Manifest parsing and `osp://` round-trips |
 | `sdk` | Request building, response validation, error mapping, abort handling |
 | `gateway` | Route behaviour through `app.inject`, error mapping, store semantics, config, logger, process lifecycle |
-| `web` | Screens and components in jsdom with React Testing Library |
+| `web` | Console screens and components in jsdom, plus storefront route, state, hook, accessibility, live-verification and import/export behaviour with React Testing Library |
 
 ## Fakes over mocks
 
@@ -48,6 +48,21 @@ fake HTTP and an in-memory store, then drives it with `app.inject` — no port, 
 network, no database. Static client serving is opt-in (`registerStatic: true`),
 so the API tests never depend on a built client being present. Tests that need a
 real socket bind port `0` and read the assigned address.
+
+## Storefront behaviour tests
+
+`apps/web/src/routes.tsx` exports the production route tree separately from the
+browser router instance, so `apps/web/src/storefront/storefront.test.tsx` can
+mount the same routes through `createMemoryRouter`. Gateway calls are stubbed at
+the `fetch` boundary; local state is reset through `localStorage` between tests.
+
+These tests are intentionally behavioural: navigate between screens, drive
+URL-backed filters, open the command palette from the keyboard, verify a listing
+against a simulated `/api/resolve`, add and verify a custom HTTPS source, import
+an Obtainium export, queue installs and updates, toggle settings and confirm
+backup round-trips. Reducer and hook suites cover the same contracts at a lower
+level. Progress timers are awaited rather than advanced with fake timers so the
+queue's real interval behaviour is exercised.
 
 ## Coverage
 

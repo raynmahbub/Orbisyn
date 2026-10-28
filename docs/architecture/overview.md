@@ -30,6 +30,22 @@ The gateway serves the built client from the same origin as the API, so a
 deployment is one process on one port with no reverse proxy and no CORS
 configuration. Everything the browser needs is fetched from `/api/...`.
 
+## Two client surfaces
+
+`apps/web` now mounts two route trees on one browser origin:
+
+- `/` is the consumer **Orbisyn Store**: a responsive PWA with curated catalog
+  data, local device state, source bridges, install queue, settings and backups.
+  See the [storefront guide](../storefront/README.md).
+- `/console` is the original resolver/developer console: it uses the SDK and
+  React Query to inspect live resolution results, diagnostics, artifacts,
+  providers and OSP documents.
+
+Both surfaces share the same `StoreProvider` shell and the same gateway. The
+storefront's editorial catalog is deliberately separate from `AppRecord`: demo
+presentation fields never overwrite live provider facts. `POST /api/resolve` is
+the boundary where a listing is checked against upstream reality.
+
 ## Layers
 
 | Layer | Package | Rules |

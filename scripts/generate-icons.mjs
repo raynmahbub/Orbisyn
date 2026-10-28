@@ -74,7 +74,7 @@ function render(size) {
   const ringThickness = size * MARK.ringThickness;
   const coreRadius = size * MARK.coreRadius;
   const satelliteRadius = size * MARK.satelliteRadius;
-  const { satelliteX, satelliteY } = satellitePosition(size, cx, cy, ringRadius);
+  const { satelliteX, satelliteY } = satellitePosition(cx, cy, ringRadius);
 
   for (let y = 0; y < size; y += 1) {
     for (let x = 0; x < size; x += 1) {
@@ -125,7 +125,7 @@ function render(size) {
   return pixels;
 }
 
-function satellitePosition(size, cx, cy, ringRadius) {
+function satellitePosition(cx, cy, ringRadius) {
   return {
     satelliteX: cx + Math.cos(MARK.satelliteAngle) * ringRadius,
     satelliteY: cy + Math.sin(MARK.satelliteAngle) * ringRadius,
@@ -198,7 +198,7 @@ function renderSvg() {
   const ringThickness = size * MARK.ringThickness * 1.15;
   const coreRadius = size * MARK.coreRadius;
   const satelliteRadius = size * MARK.satelliteRadius;
-  const { satelliteX, satelliteY } = satellitePosition(size, cx, cy, ringRadius);
+  const { satelliteX, satelliteY } = satellitePosition(cx, cy, ringRadius);
   const hex = (rgb) => `#${rgb.map((c) => c.toString(16).padStart(2, '0')).join('')}`;
 
   return [

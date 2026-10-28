@@ -17,7 +17,7 @@ afterEach(() => {
 // jsdom ships no IndexedDB; the local store is a first-class part of the client,
 // so the tests run against a real implementation rather than a stub.
 // jsdom implements neither of these; components that call them must not crash.
-if (!('matchMedia' in window)) {
+if (typeof window.matchMedia !== 'function') {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: (query: string) => ({

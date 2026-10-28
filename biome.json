@@ -16,8 +16,12 @@
     "rules": {
       "preset": "recommended",
       "suspicious": { "noExplicitAny": "error" },
-      "style": { "useConst": "error", "noNonNullAssertion": "error" },
-      "complexity": { "noForEach": "off" }
+      "style": {
+        "useConst": "error",
+        "noNonNullAssertion": "error",
+        "noDescendingSpecificity": "off"
+      },
+      "complexity": { "noForEach": "off", "noImportantStyles": "off" }
     }
   },
   "javascript": {

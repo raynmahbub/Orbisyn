@@ -54,13 +54,21 @@ table against `.env.example` in both directions, so the two cannot drift.
 ```bash
 cp .env.example .env
 npm install
-npm run dev:api    # gateway on :8787
-npm run dev        # client on :5173, proxying /api to the gateway
+npm run dev        # gateway on :8787 and storefront on :5173
+npm run dev:api    # gateway only, when you need a separate terminal
+npm run dev:web    # Vite only, when you need a separate terminal
+npm run preview    # production build served by one process on :8787
 ```
 
 The client never reads these variables: it calls `/api` on its own origin, and the
 Vite dev server proxies that path to `ORBISYN_GATEWAY_URL` (default
 `http://127.0.0.1:8787`). One origin in development, one origin in production.
+
+Behind a TLS-inspecting proxy, Node may need the proxy's CA in addition to its
+bundled store. Point `NODE_EXTRA_CA_CERTS` at the PEM certificate bundle for that
+proxy when starting the gateway. Without the CA, Node's outbound `fetch` may fail
+TLS verification; the gateway surfaces that as a typed `upstream-unavailable`
+response rather than pretending a source resolved.
 
 ## Secrets
 
