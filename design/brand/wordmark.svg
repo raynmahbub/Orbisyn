@@ -1,0 +1,19 @@
+<!-- Wordmark: "Orbisyn" set in the interface stack. The mark is the icon; the
+     wordmark is only ever used next to it, never instead of it. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 226 48" width="226" height="48" role="img" aria-labelledby="wordmark-title">
+  <title id="wordmark-title">Orbisyn</title>
+  <g transform="translate(6 6) scale(0.5625)">
+    <circle cx="32" cy="32" r="19.2" fill="none" stroke="#2563eb" stroke-width="3.52" />
+    <circle cx="32" cy="32" r="6.72" fill="#60a5fa" />
+    <circle cx="47.53" cy="20.71" r="3.33" fill="#7dd3fc" />
+  </g>
+  <text
+    x="60"
+    y="32"
+    font-family="'Inter var', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    font-size="26"
+    font-weight="700"
+    letter-spacing="-0.02em"
+    fill="#0f172a"
+  >Orbisyn</text>
+</svg>

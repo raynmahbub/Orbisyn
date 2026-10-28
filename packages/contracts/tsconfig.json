@@ -1,0 +1,14 @@
+{
+  "extends": "@orbisyn/tsconfig/library.json",
+  "include": [
+    "src"
+  ],
+  "compilerOptions": {
+    "types": [],
+    "paths": {
+      "@orbisyn/core": [
+        "../core/src/index.ts"
+      ]
+    }
+  }
+}

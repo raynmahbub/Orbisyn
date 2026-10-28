@@ -1,0 +1,13 @@
+{
+  "extends": "@orbisyn/tsconfig/node.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM"],
+    "paths": {
+      "@orbisyn/contracts": ["../../packages/contracts/src/index.ts"],
+      "@orbisyn/core": ["../../packages/core/src/index.ts"],
+      "@orbisyn/providers": ["../../packages/providers/src/index.ts"],
+      "@orbisyn/osp": ["../../packages/osp/src/index.ts"]
+    }
+  }
+}

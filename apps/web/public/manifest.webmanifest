@@ -1,0 +1,30 @@
+{
+  "name": "Orbisyn — Every source. One orbit.",
+  "short_name": "Orbisyn",
+  "description": "A cross-platform app store that unifies forge releases, F-Droid repositories, Obtainium links, catalog bridges, companion handoffs and community registries with verifiable source evidence.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "categories": ["utilities", "productivity", "developer"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Explore apps", "short_name": "Explore", "url": "/explore" },
+    { "name": "Updates", "url": "/updates" },
+    { "name": "Library", "url": "/library" },
+    { "name": "Sources", "url": "/sources" }
+  ]
+}

@@ -1,0 +1,15 @@
+<!-- App icon: the mark on the dark surface gradient, 512×512, no rounded
+     corners — the platform masks the tile itself. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="icon-title">
+  <title id="icon-title">Orbisyn app icon</title>
+  <defs>
+    <linearGradient id="surface" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220" />
+      <stop offset="1" stop-color="#111b30" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#surface)" />
+  <circle cx="256" cy="256" r="153.6" fill="none" stroke="#2563eb" stroke-width="28.16" />
+  <circle cx="256" cy="256" r="53.76" fill="#60a5fa" />
+  <circle cx="380.2" cy="165.7" r="26.62" fill="#7dd3fc" />
+</svg>

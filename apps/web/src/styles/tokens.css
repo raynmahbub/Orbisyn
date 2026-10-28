@@ -1,0 +1,103 @@
+/**
+ * Design tokens.
+ *
+ * Every value the interface uses lives here. Components never hard-code a
+ * colour or a radius, which is what makes a theme change a one-file diff and
+ * keeps the light theme honest.
+ *
+ * Palette from the Orbisyn brand system: Orbit (blue), Compass (cyan),
+ * Star (amber), Sync (green).
+ */
+
+:root {
+  /* Brand */
+  --color-primary: #2563eb;
+  --color-primary-strong: #1d4ed8;
+  --color-primary-soft: #1e3a8a;
+  --color-accent: #22d3ee;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  /* Surfaces */
+  --color-background: #0b1220;
+  --color-surface: #111827;
+  --color-surface-raised: #16203a;
+  --color-surface-overlay: rgba(11, 18, 32, 0.86);
+  --color-border: #223049;
+  --color-border-strong: #31405f;
+
+  /* Text */
+  --color-text: #eef2ff;
+  --color-text-muted: #94a3b8;
+  --color-text-subtle: #64748b;
+  --color-text-inverse: #0b1220;
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* Spacing scale (4-based) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Typography */
+  --font-sans:
+    "Inter var", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 28px;
+  --text-3xl: 36px;
+  --leading-tight: 1.2;
+  --leading-normal: 1.55;
+
+  /* Elevation & motion */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 24px rgba(3, 7, 18, 0.45);
+  --shadow-lg: 0 24px 60px rgba(3, 7, 18, 0.55);
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+
+  /* Layout */
+  --sidebar-width: 248px;
+  --bottom-nav-height: 60px;
+  --content-max: 1180px;
+}
+
+[data-theme="light"] {
+  --color-background: #f6f8fc;
+  --color-surface: #ffffff;
+  --color-surface-raised: #f1f5fb;
+  --color-surface-overlay: rgba(246, 248, 252, 0.9);
+  --color-border: #dde5f2;
+  --color-border-strong: #c3cfe3;
+  --color-text: #0f172a;
+  --color-text-muted: #52617a;
+  --color-text-subtle: #7c8aa5;
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 24px 60px rgba(15, 23, 42, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+  }
+}
